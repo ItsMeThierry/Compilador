@@ -1,0 +1,1 @@
+Quando acontecer o erro em comando composto esperado 'begin' e encontrado end é porque ele espera outro comando composto na lista de comandos

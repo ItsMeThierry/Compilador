@@ -1,0 +1,99 @@
+Descrição:
+δ(ESTADO ATUAL, TOKEN LIDO, TOPO DA PILHA) = (PRÓXIMO ESTADO, ADICIONA À PILHA)
+
+X: significa não consome
+
+//programa
+
+  δ(q0, 'program', '$') = (q0, 'program')
+
+  δ(q0, 'identificador', 'program') = (q0, 'id')
+
+  δ(q0, ';', 'id') = (q1, ';')
+
+  δ(q0, ε, '$') = (q0, 'sucesso')
+
+//declarações_variáveis
+
+  δ(q1, 'var', ';') = (q3, 'var')
+
+  δ(q1, X, {'lista_declarações_variáveis' | ';'}) = (q4, REDUZ À declarações_variáveis)
+
+//lista_declarações_variáveis
+
+  δ(q2, ',', 'lista_de_identificadores') = (q3, '02_,')
+
+  δ(q2, ':', 'lista_de_identificadores') = (q2, ':')
+
+  δ(q2, {'integer' | 'real' | 'boolean'}, ':') = (q2, 'tipo') //simplifico?
+
+  δ(q2, ';', 'tipo') = (q2, ';')
+
+  δ(q2, 'identificador', ';') = (q2, 'lista_de_identificadores')
+
+  δ(q2, X, ';') = (q1, REDUZ À lista_declarações_variáveis) *repete transition()
+
+//lista_de_identificadores
+
+  δ(q3, 'identificador', 'var') = (q2, 'lista_de_identificadores')
+
+  δ(q3, 'identificador', '02_,') = (q2, ε)
+
+  δ(q3, 'identificador', '07_,') = (q7, ε)
+
+  δ(q3, 'identificador', '09_,') = (q9, ε)
+  
+//declarações_de_subprogramas
+
+  δ(q4, 'procedure', 'declarações_variáveis') = (q5, 'procedure')
+
+  δ(q4, 'X', 'declarações_variáveis') = (q5, 'procedure')
+
+//declaração_de_subprograma
+
+  δ(q5, 'identificador', 'procedure') = (q6, 'id')
+
+  δ(q5, ';', 'argumentos') = (q8, ';')
+
+//argumentos
+
+  δ(q6, '(', 'id') = (q7, '(')
+
+  δ(q6, ')', 'lista_de_parametros') = (q6, ')')
+
+  δ(q6, X, {')' | 'id'}) = (q5, REDUZ À argumentos) *repete transition()
+
+//lista_de_parametros
+
+  δ(q7, 'identificador', {'(' | ';'}) = (q7, 'lista_de_identificadores')
+
+  δ(q7, ',', 'lista_de_identificadores') = (q3, '07_,')
+
+  δ(q7, ':', 'lista_de_identificadores') = (q7, ':')
+
+  δ(q7, {'integer' | 'real' | 'boolean'}, ':') = (q7, 'tipo') //simplifico?
+
+  δ(q7, ';', 'tipo') = (q7, ';')
+
+  δ(q7, X, 'tipo') = (q6, REDUZ À lista_de_parametros) *repete transition()
+
+//declarações_variáveis_2
+
+  δ(q8, 'var', ';') = (q9, 'var')
+
+  δ(q8, X, {'lista_declarações_variáveis' | ';'}) = (q5, REDUZ À declarações_variáveis)
+  
+//lista_declarações_variáveis_2
+
+  δ(q9, ',', 'lista_de_identificadores') = (q3, '09_,')
+
+  δ(q9, ':', 'lista_de_identificadores') = (q9, ':')
+
+  δ(q9, {'integer' | 'real' | 'boolean'}, ':') = (q9, 'tipo') //simplifico?
+
+  δ(q9, ';', 'tipo') = (q9, ';')
+
+  δ(q9, 'identificador', ';') = (q9, 'lista_de_identificadores')
+
+  δ(q9, X, ';') = (q8, REDUZ À lista_declarações_variáveis) *repete transition()
+
