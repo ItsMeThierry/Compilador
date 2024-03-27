@@ -1,6 +1,6 @@
 reserved_words = [
     'program', 'var', 'integer', 'real', 'boolean', 'procedure', 'begin',
-    'end', 'if', 'then', 'else', 'while', 'do', 'not'
+    'end', 'if', 'then', 'else', 'while', 'do', 'not', 'true', 'false'
 ]
 delimiters = [';', '.', '(', ')', ',']
 
@@ -163,6 +163,7 @@ class AnalisadorLexico:
 
     for char in input_string:
       self.transition(char)
+      ##print(self.current_state, self.line, char)
 
       if self.current_state == 'invalid':
         break

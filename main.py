@@ -11,29 +11,25 @@ arquivos = [
     'exemplos/lexico/teste1.txt', 'exemplos/sintatico/Test1.pas',
     'exemplos/sintatico/Test2.pas', 'exemplos/sintatico/Test3.pas',
     'exemplos/sintatico/Test4.pas', 'exemplos/sintatico/Test5.pas',
-    'exemplos/teste.txt'
+    'exemplos/teste.txt', 'exemplos/semantico/Teste1.pas'
 ]
 
 lexico = analisador_lexico.AnalisadorLexico()
 
-with open(arquivos[6], 'r') as f:
+with open(arquivos[7], 'r') as f:
 
   for line in f:
     lexico.check_line(line)
-
-    if lexico.current_state == 'invalid' or lexico.current_state == 'q1':
-      break
 
   lexico.stop()
 
   if lexico.current_state == 'invalid':
 
-    print("Erro na linha " + str(lexico.line) + ", caractere '" + lexico.word +
-          "' inválido!")
+    print(f'Erro léxico na linha {lexico.line}, caractere {lexico.word} inválido!')
 
   elif lexico.current_state == 'q1':
 
-    print("Erro na linha " + str(lexico.line) + ", comentário não fechado!")
+    print(f'Erro léxico na linha {lexico.line}, comentário não fechado!')
 
   elif lexico.current_state != 'invalid' and lexico.current_state != 'q1':
 
@@ -41,6 +37,6 @@ with open(arquivos[6], 'r') as f:
 
     sintatico = analisador_sintatico.AnalisadorSintatico(lexico.tokens)
 
-    if sintatico.accepted:
-      print('Sintaxe aceito!')
+    ##if sintatico.accepted:
+      ##print('Sintaxe aceito!')
     
