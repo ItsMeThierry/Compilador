@@ -1,42 +1,29 @@
 import analisador_lexico
 import analisador_sintatico
 
-
-def exibir_tokens(tokens):
-  for token in tokens:
-    print("{:10} {:19} {:2}".format(*token))
-
-
-arquivos = [
-    'exemplos/lexico/teste1.txt', 'exemplos/sintatico/Test1.pas',
-    'exemplos/sintatico/Test2.pas', 'exemplos/sintatico/Test3.pas',
-    'exemplos/sintatico/Test4.pas', 'exemplos/sintatico/Test5.pas',
-    'exemplos/teste.txt', 'exemplos/semantico/Teste1.pas'
-]
+arquivos = ('exemplos/lexico/teste1.txt', 'exemplos/sintatico/Test1.pas',
+            'exemplos/sintatico/Test2.pas', 'exemplos/sintatico/Test3.pas',
+            'exemplos/sintatico/Test4.pas', 'exemplos/sintatico/Test5.pas',
+            'exemplos/teste.txt', 'exemplos/semantico/Teste1.pas')
 
 lexico = analisador_lexico.AnalisadorLexico()
+sintatico = analisador_sintatico.AnalisadorSintatico()
 
-with open(arquivos[7], 'r') as f:
+print('Abrindo arquivo...')
 
-  for line in f:
-    lexico.check_line(line)
+try:
+  with open(arquivos[0], 'r') as file:
 
-  lexico.stop()
+    lexico.check(file.read())
 
-  if lexico.current_state == 'invalid':
+    if lexico.success:
+      print('[LÉXICO] Analise feita com sucesso!')
 
-    print(f'Erro léxico na linha {lexico.line}, caractere {lexico.word} inválido!')
+      sintatico.check(lexico.tokens)
 
-  elif lexico.current_state == 'q1':
+      if sintatico.success:
+        print('[SINTATICO] Analise feita com sucesso!')
+        print('[SEMANTICO] Analise feita com sucesso!')
 
-    print(f'Erro léxico na linha {lexico.line}, comentário não fechado!')
-
-  elif lexico.current_state != 'invalid' and lexico.current_state != 'q1':
-
-    ##exibir_tokens(lexico.tokens)
-
-    sintatico = analisador_sintatico.AnalisadorSintatico(lexico.tokens)
-
-    ##if sintatico.accepted:
-      ##print('Sintaxe aceito!')
-    
+except FileNotFoundError:
+  print('[ERRO] Arquivo não encontrado.')

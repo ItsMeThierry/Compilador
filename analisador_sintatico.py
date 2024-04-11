@@ -2,13 +2,17 @@ import analisador_semantico
   
 class AnalisadorSintatico:
 
-  def __init__(self, tokens):
+  def __init__(self):
     self.semantico = analisador_semantico.AnalisadorSemantico()
-    
+
+    self.tokens = []
+    self.current_token = (None, None, None)
+    self.stack_pos = 0
+    self.success = False
+
+  def check(self, tokens):
     self.tokens = tokens
     self.current_token = self.tokens[0]
-    self.stack_pos = 0
-    self.accepted = False
 
     try:
       self.parser()
@@ -16,11 +20,11 @@ class AnalisadorSintatico:
       if self.stack_pos == len(self.tokens):
         self.stack_pos -= 1
       print(
-          f'Erro sintático na linha {self.tokens[self.stack_pos][2]}, {e}, encontrado: \'{self.tokens[self.stack_pos][0]}\''
+          f'[ERRO] Erro sintático na linha {self.tokens[self.stack_pos][2]}, {e}, encontrado: \'{self.tokens[self.stack_pos][0]}\''
       )
     except analisador_semantico.SemanticError as e:
-      print(f'Erro semântico na linha {self.tokens[self.stack_pos-1][2]}, {e}')
-
+      print(f'[ERRO] Erro semântico na linha {self.tokens[self.stack_pos][2]}, {e}')
+    
   def next(self):
     self.stack_pos += 1
     self.current_token = self.tokens[self.stack_pos] if self.stack_pos < len(
@@ -68,8 +72,7 @@ class AnalisadorSintatico:
     if self.current_token[0] != '.':
       raise SyntaxError('esperado \'.\'')
 
-    self.accepted = True
-    print('Semântico aceito!')
+    self.success = True
 
   def declarações_variáveis(self):
     if self.current_token[0] == 'var':
@@ -236,7 +239,6 @@ class AnalisadorSintatico:
       else:
         self.semantico.procedure_pos = pos
         self.ativação_de_procedimento()
-        self.semantico.check_parameters_absence()
         self.semantico.parametros = 0
         self.semantico.procedure_pos = -1
     elif self.current_token[0] == 'if':
@@ -315,6 +317,8 @@ class AnalisadorSintatico:
 
       if self.current_token[0] != ')':
         raise SyntaxError('esperado \')\'')
+
+      self.semantico.check_parameters_absence()
 
       self.next()
 
